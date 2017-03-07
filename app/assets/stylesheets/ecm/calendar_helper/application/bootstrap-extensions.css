@@ -1,0 +1,17 @@
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 -5px;
+}
+
+.flex-row .column {
+  flex-basis: 100%;
+  padding: 0 5px;
+}
+
+@media screen and (min-width: 992px) {
+  .flex-row .column {
+    flex: 1;
+  }
+}

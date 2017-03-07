@@ -1,0 +1,31 @@
+@media screen and (max-width: 991px) {
+  .calendar .calendar-weekday-name {
+    display: none;
+  }
+}
+
+.calendar-item {
+  border: 1px solid transparent;
+  border-radius: 4px;  
+  display: block;
+  padding: 4px;
+}
+
+.calendar-item {
+  text-decoration: none
+}
+
+.calendar-item a, .calendar-item a:hover {
+  color: white;
+  
+}
+
+.calendar-item a:hover {
+  text-decoration: none;
+}
+
+.calendar-item-default {
+  border-color: darkgrey;
+  background-color: grey;
+  color: white;
+}

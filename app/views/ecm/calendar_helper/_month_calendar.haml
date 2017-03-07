@@ -1,0 +1,29 @@
+.calendar
+  .flex-row.calendar-weekday-names
+    - localized_day_names.each do |day|
+      .column.calendar-weekday-name
+        %h1= day
+  - days_by_week.each do |week, days|
+    .flex-row
+      - days_count = 0
+      - days.sort.each do |day, elements|
+        - days_count += 1
+        - if day < 1
+          .column
+        - else
+          - td_classes = ['calendar-day']
+          - td_classes << 'active today' if day == Time.zone.now.to_date
+          - td_classes << 'with-elements' if elements.any?
+          .column{ class: td_classes.join(" ") }
+            .calendar-day-container
+              %h1.calendar-day-title= day.day
+              %div.calendar-entries
+              - elements.each do |element|
+                %div.calendar-day-content
+                  %span.calendar-item.calendar-item-default
+                    - if link_elements
+                      = link_to(element.send(display_method), element)
+                    - else
+                      = element.send(display_method)
+      - (7 - days_count).times do
+        .column
