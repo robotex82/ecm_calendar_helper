@@ -1,0 +1,7 @@
+en:
+  ecm:
+    calendar_helper:
+      month_calendar_pagination:
+        today: Today
+        previous: Previous
+        next: Next
