@@ -31,29 +31,15 @@ module Ecm
       end
 
       days_by_week = {}
-      days_in_week = {}
-      week = beginning_of_month.cweek
-      (beginning_of_month..end_of_month).each_with_index do |day, index|
-        days_in_week[day] = elements.find_all { |e| e.send(options[:date_method]).to_date == day.to_date } || {}
-        
-        if day.wday == last_day_of_week
-          (7 - days_in_week.size).times do |i|
-            days_in_week[0 - i] = {}
-          end
-          week = (day + 1.day).cweek
-        end
+      first_day = beginning_of_month.beginning_of_week
+      last_day = end_of_month.end_of_week
 
-        if day.wday == last_day_of_week || index == end_of_month.day - 1
-          days_by_week[week] = days_in_week 
-          days_in_week = {}
-        end
-
-        if index == end_of_month.day - 1
-          (7 - days_in_week.size).times do |i|
-            days_in_week[days_in_week.size - i] = {}
-          end
-        end
+      days = (first_day..last_day).each_with_object({}).with_index do |(day, memo), index|
+        memo[day.to_date] = elements.find_all { |e| e.send(options[:date_method]).to_date == day.to_date } || {}
       end
+
+      days_by_week = days.each_with_object({}) { |(k, v), m| (m[k.cweek] ||= {})[k] = v }
+
       render partial: 'ecm/calendar_helper/month_calendar', locals: { localized_day_names: localized_day_names, days_by_week: days_by_week, display_method: display_method, link_elements: link_elements }
     end
     
