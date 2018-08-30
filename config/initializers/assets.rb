@@ -1,1 +1,1 @@
-Rails.application.config.assets.precompile += %w(ecm_calendar_helper.css)
+Rails.application.config.assets.precompile += %w(ecm_calendar_helper.css ecm_calendar_helper.js)

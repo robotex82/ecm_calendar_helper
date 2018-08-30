@@ -1,8 +1,10 @@
 .calendar
   .flex-row.calendar-weekday-names
     - localized_day_names.each do |day|
-      .column.calendar-weekday-name
-        %h1= day
+      .column
+        .calendar-weekday
+          .column.calendar-weekday-name-container.border.mb-3.p-2
+            %h1= day
 
   - days_by_week.each do |week, days|
     .flex-row{ class: "week-#{week}" }
@@ -13,13 +15,19 @@
         - td_classes << 'with-elements' if elements.any?
         - td_classes << 'not-actual-month' if day.month != Time.zone.now.month
         .column{ class: td_classes.join(" ") }
-          .calendar-day-container
+          .calendar-day-container.border.mb-3.p-2
             %h1.calendar-day-title= day.day
             %div.calendar-entries
             - elements.each do |element|
               %div.calendar-day-content
                 %span.calendar-item.calendar-item-default
+                  - if display_method.nil?
+                    - label = nil
+                  - elsif display_method.respond_to?(:call)
+                    - label = display_method.call(self, element)
+                  - elsif element.respond_to?(display_method)
+                    - label = element.send(display_method)
                   - if link_elements
-                    = link_to(element.send(display_method), element)
+                    = link_to(label, element)
                   - else
-                    = element.send(display_method)
+                    = label

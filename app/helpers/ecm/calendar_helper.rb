@@ -1,11 +1,23 @@
 module Ecm
   module CalendarHelper
     # renders a calendar table
+    #
+    # Example with elements that span more than 1 day:
+    #
+    #     = month_calendar @date, @reservations, start_date_method: :start_at, end_date_method: :end_at
+    #
+    # Example of using a lamda as display method:
+    #
+    #     = month_calendar(display_method: ->(context, resource) { context.link_to(resource.booker.human, resource.booker) })
+    #
     def month_calendar(date = Time.zone.now.to_date, elements = [], options = {})
-      options.reverse_merge! :date_method => :start_at, :display_method => :to_s, :link_elements => true, :start_day => :sunday
+      options.reverse_merge! :date_method => :start_at, :display_method => :to_s, :link_elements => true, :start_day => :sunday, start_date_method: nil, end_date_method: nil
 
       display_method = options.delete(:display_method)
       link_elements  = options.delete(:link_elements)
+
+      start_date_method = options.delete(:start_date_method)
+      end_date_method   = options.delete(:end_date_method)
       
       # calculate beginning and end of month
       beginning_of_month = date.beginning_of_month.to_date
@@ -35,7 +47,13 @@ module Ecm
       last_day = end_of_month.end_of_week
 
       days = (first_day..last_day).each_with_object({}).with_index do |(day, memo), index|
-        memo[day.to_date] = elements.find_all { |e| e.send(options[:date_method]).to_date == day.to_date } || {}
+        memo[day.to_date] = elements.find_all do |e|
+          if start_date_method.present? && end_date_method.present?
+            day.to_date.between?(e.send(start_date_method), e.send(end_date_method))
+          else
+            e.send(options[:date_method]).to_date == day.to_date
+          end
+        end || {}
       end
 
       days_by_week = days.each_with_object({}) { |(k, v), m| (m[k.cweek] ||= {})[k] = v }
@@ -44,15 +62,16 @@ module Ecm
     end
     
     def month_calendar_pagination(date, options = {})
-      options.reverse_merge!(show_today_link: true)
+      options.reverse_merge!(show_today_link: true, remote: false)
 
       show_today_link = options.delete(:show_today_link)
+      remote          = options.delete(:remote)
 
       actual_month   = Time.zone.now.beginning_of_month.to_date
       previous_month = date.beginning_of_month.to_date - 1.month
       next_month     = date.beginning_of_month.to_date + 1.months
 
-      render partial: 'ecm/calendar_helper/month_calendar_pagination', locals: { actual_month: actual_month, previous_month: previous_month, next_month: next_month, show_today_link: show_today_link, date: date }
+      render partial: 'ecm/calendar_helper/month_calendar_pagination', locals: { actual_month: actual_month, previous_month: previous_month, next_month: next_month, show_today_link: show_today_link, date: date, remote: remote }
     end
   end
 end  

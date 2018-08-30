@@ -1,3 +1,55 @@
 = EcmCalendarHelper
 
 This project rocks and uses MIT-LICENSE.
+
+== Installation
+
+Add it to your Gemfile.
+
+    # Gemfile
+    gem 'ecm_calendar_helper'
+
+== Usage
+
+Add the helper to your controller:
+
+    # app/controllers/application_controller.rb
+    class ApplicationController < ActionController::Base
+      helper Ecm::CalendarHelper
+    end
+
+    # app/controllers/reservations_controller.rb
+    class ApplicationController < ActionController::Base
+      before_action :initialize_calendar
+
+      private
+
+      def initialize_calendar
+        @year  = params[:year]  ||= Time.zone.now.year
+        @month = params[:month] ||= Time.zone.now.month
+
+        @date = Date.strptime("#{@month}-#{@year}", "%m-%Y")
+
+        @collection = Reservation.in_month(@date).all
+      end
+    end
+
+Render the calendar:
+
+    # i.e.app/views/reservations/index.html.haml
+    = month_calendar @date, @collection, display_method: :name, start_day: :monday
+
+== Pagination
+
+Add routes for nice year and month params:
+
+    # config/routes.rb
+    Rails.application.routes.draw do
+      resources :reservations do
+        get "(/:year/:month)", action: :index, on: :collection
+      end
+    end
+
+== Remote rendering
+
+@TODO

@@ -1,6 +1,12 @@
 @media screen and (max-width: 991px) {
-  .calendar .calendar-weekday-name {
+  .calendar .calendar-weekday {
     display: none;
+  }
+}
+
+@media screen and (min-width: 991px) {
+  .calendar .calendar-day-container {
+    height: 7vw;
   }
 }
 

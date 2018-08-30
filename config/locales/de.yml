@@ -1,4 +1,7 @@
 de:
+  date:
+    formats:
+      month_with_year: '%B %Y'
   ecm:
     calendar_helper:
       month_calendar_pagination:
